@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Create an Event</h1>
-    <form>
+    <form @submit.prevent="createEvent">
       <label>Select a category</label>
       <select v-model="event.category">
         <option v-for="cat in categories" :key="cat">{{ cat }}</option>
@@ -50,10 +50,40 @@
 
 <script>
 import Datepicker from 'vuejs-datepicker'
-
 export default {
   components: {
     Datepicker
+  },
+  data() {
+    const times = []
+    for (let i = 1; i <= 24; i++) {
+      times.push(i + ':00')
+    }
+    return {
+      event: this.createFreshEvent(),
+      times,
+      categories: this.$store.state.categories
+    }
+  },
+  methods: {
+    createEvent() {
+      this.$store.dispatch('createEvent', this.event)
+    },
+    createFreshEvent() {
+      const user = this.$store.state.user
+      const id = Math.floor(Math.random() * 10000000)
+      return {
+        id: id,
+        category: '',
+        organizer: user,
+        title: '',
+        description: '',
+        location: '',
+        date: '',
+        time: '',
+        attendees: []
+      }
+    }
   }
 }
 </script>
